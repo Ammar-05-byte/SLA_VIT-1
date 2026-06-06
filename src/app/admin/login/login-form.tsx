@@ -73,8 +73,7 @@ export function AdminLoginForm() {
       return;
     }
 
-    router.push("/admin");
-    router.refresh();
+    window.location.assign("/admin");
   }
 
   const banner = configBanner || notAdminBanner;
