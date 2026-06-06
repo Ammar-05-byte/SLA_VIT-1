@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -86,48 +86,6 @@ export function AdminShellSidebar({
   const pathname = usePathname();
   const router = useRouter();
   const [logoOk, setLogoOk] = useState(true);
-  const [profilePatch, setProfilePatch] = useState<Partial<AdminProfile>>({});
-
-  const profile = useMemo(
-    (): AdminProfile => ({
-      name: profilePatch.name ?? serverAdmin.name,
-      email: profilePatch.email ?? serverAdmin.email,
-      role: profilePatch.role ?? serverAdmin.role,
-    }),
-    [serverAdmin, profilePatch],
-  );
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function pullFromSupabase() {
-      try {
-        const res = await fetch("/api/admin/me", { cache: "no-store" });
-        if (!res.ok || cancelled) return;
-        const data: { email?: string | null; name?: string | null; role?: string | null } = await res.json();
-        if (cancelled) return;
-        setProfilePatch((prev) => ({
-          ...prev,
-          ...(typeof data.name === "string" && data.name.length > 0 ? { name: data.name } : {}),
-          ...(typeof data.email === "string" && data.email.length > 0 ? { email: data.email } : {}),
-          ...(typeof data.role === "string" && data.role.length > 0 ? { role: data.role } : {}),
-        }));
-      } catch {
-        /* keep server / previous profile */
-      }
-    }
-
-    void pullFromSupabase();
-
-    function onVisible() {
-      if (document.visibilityState === "visible") void pullFromSupabase();
-    }
-    document.addEventListener("visibilitychange", onVisible);
-    return () => {
-      cancelled = true;
-      document.removeEventListener("visibilitychange", onVisible);
-    };
-  }, [pathname]);
 
   async function logout() {
     const supabase = createClient();
@@ -164,8 +122,11 @@ export function AdminShellSidebar({
           </div>
           <div className="min-w-0">
             <p className="font-[family-name:var(--font-admin-serif),Georgia,serif] text-lg font-bold leading-tight">Admin Panel</p>
-            <p className="truncate text-xs text-white/75" title={profile.role ? `Role: ${profile.role}` : undefined}>
-              {formatRole(profile.role)}
+            <p
+              className="truncate text-xs text-white/75"
+              title={serverAdmin.role ? `Role: ${serverAdmin.role}` : undefined}
+            >
+              {formatRole(serverAdmin.role)}
             </p>
           </div>
         </div>

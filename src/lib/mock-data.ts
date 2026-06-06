@@ -88,7 +88,7 @@ export const mockTeam = [
   },
   {
     id: "t3",
-    name: "Ramana",
+    name: "Ramanaa B V",
     role: "Secretary General",
     image: "/Secretary General.jpg",
     instagram: "https://www.instagram.com/vit_sla?igsh=MTVlaDBlcHh2aWNpZA==",

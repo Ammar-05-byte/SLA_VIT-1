@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+import { hasUsableDatabaseUrl, prisma } from "@/lib/prisma";
 import { createClient } from "@/lib/supabase/server";
 import { getDashboardStats } from "@/lib/data";
 
@@ -24,7 +24,7 @@ export async function getAdminDashboardData() {
   /** Same source as Manage Posts (`prisma.blog`) so totals and lists never disagree. */
   let posts = stats.blogs;
 
-  if (process.env.DATABASE_URL) {
+  if (hasUsableDatabaseUrl()) {
     try {
       const [blogRows, messageRows, blogCount] = await Promise.all([
         prisma.blog.findMany({

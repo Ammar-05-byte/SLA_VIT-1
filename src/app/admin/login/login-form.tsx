@@ -3,6 +3,7 @@
 import { startTransition, useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
+import { LoaderCircle, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { createClient } from "@/lib/supabase/client";
@@ -72,7 +73,6 @@ export function AdminLoginForm() {
       return;
     }
 
-    setLoading(false);
     router.push("/admin");
     router.refresh();
   }
@@ -87,6 +87,7 @@ export function AdminLoginForm() {
           e.preventDefault();
           void onSubmit(new FormData(e.currentTarget));
         }}
+        aria-busy={loading}
       >
         <div className="flex flex-col items-center text-center">
           <div
@@ -123,6 +124,7 @@ export function AdminLoginForm() {
               placeholder="admin@sla.org"
               required
               autoComplete="email"
+              disabled={loading}
               className={inputClass}
             />
           </div>
@@ -137,6 +139,7 @@ export function AdminLoginForm() {
               placeholder="Enter your password"
               required
               autoComplete="current-password"
+              disabled={loading}
               className={inputClass}
             />
           </div>
@@ -147,8 +150,33 @@ export function AdminLoginForm() {
           disabled={loading || !!configBanner}
           className="mt-8 h-12 w-full rounded-xl border-0 bg-[#B91C1C] text-base font-semibold text-white shadow-none hover:bg-[#991b1b] hover:translate-y-0 hover:shadow-none focus-visible:ring-[#B91C1C]/50"
         >
-          {loading ? "Signing in…" : "Sign In"}
+          {loading ? (
+            <span className="inline-flex items-center gap-2">
+              <LoaderCircle className="h-4 w-4 animate-spin" aria-hidden />
+              Signing in
+            </span>
+          ) : (
+            "Sign In"
+          )}
         </Button>
+
+        {loading ? (
+          <div
+            className="mt-4 flex items-center gap-3 rounded-xl border border-[#F4D6A2] bg-[#FFF8EA] px-4 py-3 text-left"
+            role="status"
+            aria-live="polite"
+          >
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#B91C1C]/10 text-[#B91C1C]">
+              <ShieldCheck className="h-5 w-5" aria-hidden />
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-neutral-900">Verifying admin access</p>
+              <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[#F4D6A2]/70">
+                <div className="h-full w-1/2 animate-[login-progress_1.1s_ease-in-out_infinite] rounded-full bg-[#B91C1C]" />
+              </div>
+            </div>
+          </div>
+        ) : null}
 
         {banner ? <p className="mt-4 text-center text-sm text-red-600">{banner}</p> : null}
         {error ? <p className="mt-4 text-center text-sm text-red-600">{error}</p> : null}

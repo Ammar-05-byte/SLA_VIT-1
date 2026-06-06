@@ -37,7 +37,7 @@ export async function getBlogBySlug(slug: string) {
 }
 
 export async function getStories() {
-  if (!process.env.DATABASE_URL) return mockStories;
+  if (!hasUsableDatabaseUrl()) return mockStories;
   try {
     return await prisma.story.findMany({ orderBy: { publishedAt: "desc" } });
   } catch {
@@ -46,7 +46,7 @@ export async function getStories() {
 }
 
 export async function getStoryBySlug(slug: string) {
-  if (!process.env.DATABASE_URL) return mockStories.find((item) => item.slug === slug) ?? null;
+  if (!hasUsableDatabaseUrl()) return mockStories.find((item) => item.slug === slug) ?? null;
   try {
     return await prisma.story.findUnique({ where: { slug } });
   } catch {
@@ -55,7 +55,7 @@ export async function getStoryBySlug(slug: string) {
 }
 
 export async function getDidYouKnowItems(): Promise<DidYouKnowListItem[]> {
-  if (!process.env.DATABASE_URL) return mockDidYouKnow;
+  if (!hasUsableDatabaseUrl()) return mockDidYouKnow;
   try {
     return await prisma.didYouKnowItem.findMany({ orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }] });
   } catch {
@@ -64,7 +64,7 @@ export async function getDidYouKnowItems(): Promise<DidYouKnowListItem[]> {
 }
 
 export async function getEvents() {
-  if (!process.env.DATABASE_URL) return mockEvents;
+  if (!hasUsableDatabaseUrl()) return mockEvents;
   try {
     return await prisma.event.findMany({ orderBy: { startsAt: "asc" } });
   } catch {
@@ -73,7 +73,7 @@ export async function getEvents() {
 }
 
 export async function getMaterials() {
-  if (!process.env.DATABASE_URL) return mockMaterials;
+  if (!hasUsableDatabaseUrl()) return mockMaterials;
   try {
     return await prisma.material.findMany({ orderBy: { createdAt: "desc" } });
   } catch {
@@ -119,7 +119,7 @@ export async function getTeamMembers() {
 }
 
 export async function getDashboardStats() {
-  if (!process.env.DATABASE_URL) {
+  if (!hasUsableDatabaseUrl()) {
     return {
       blogs: mockBlogs.length,
       stories: mockStories.length,
